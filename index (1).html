@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Desk de TI - Gestão de Chamados (v2.0)</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1000px; margin: auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #0056b3; text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 20px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .full-width { grid-column: span 3; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; }
+        button { background-color: #0056b3; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; }
+        button:hover { background-color: #004494; }
+        .dashboard { display: flex; gap: 15px; margin: 20px 0; }
+        .card { flex: 1; background: #e9ecef; padding: 15px; border-radius: 6px; text-align: center; }
+        .card h3 { margin: 0; font-size: 24px; color: #0056b3; }
+        .card p { margin: 5px 0 0; font-size: 13px; font-weight: bold; }
+        .filtros { display: flex; gap: 15px; background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #ddd; margin-top: 25px; }
+        .filtros input { flex: 2; }
+        .filtros select { flex: 1; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
+        th { background-color: #0056b3; color: white; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; display: inline-block; }
+        .Alta { background-color: #dc3545; }
+        .Média { background-color: #ffc107; color: #000; }
+        .Baixa { background-color: #28a745; }
+        .status-Aberto { background-color: #17a2b8; }
+        .status-Andamento { background-color: #fd7e14; }
+        .status-Concluído { background-color: #28a745; }
+        .btn-acao { padding: 5px 8px; font-size: 12px; width: auto; margin-right: 4px; margin-bottom: 2px; }
+        .btn-concluir { background-color: #28a745; }
+        .btn-excluir { background-color: #dc3545; }
+        @media (max-width: 768px) { 
+            .form-grid { grid-template-columns: 1fr; } 
+            .full-width { grid-column: span 1; } 
+            .dashboard, .filtros { flex-direction: column; } 
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Help Desk de TI - Gestão de Chamados</h1>
+    <p class="subtitle">Versão 2.0 - Atualizada com Setor, Filtros de Busca e Status Visual</p>
+
+    <div class="dashboard">
+        <div class="card"><h3 id="count-aberto">0</h3><p>Abertos</p></div>
+        <div class="card"><h3 id="count-andamento">0</h3><p>Em Andamento</p></div>
+        <div class="card"><h3 id="count-concluido">0</h3><p>Concluídos</p></div>
+    </div>
+
+    <form id="form-chamado">
+        <div class="form-grid">
+            <div>
+                <label>Título do Chamado *</label>
+                <input type="text" id="titulo" placeholder="Ex: Erro ao acessar sistema" required>
+            </div>
+            <div>
+                <label>E-mail do Solicitante *</label>
+                <input type="email" id="email" placeholder="seu@email.com" required>
+            </div>
+            <div>
+                <label>Setor *</label>
+                <select id="setor" required>
+                    <option value="TI">TI</option>
+                    <option value="RH">RH</option>
+                    <option value="Financeiro">Financeiro</option>
+                    <option value="Operações">Operações</option>
+                    <option value="Comercial">Comercial</option>
+                </select>
+            </div>
+            <div>
+                <label>Prioridade *</label>
+                <select id="prioridade">
+                    <option value="Baixa">Baixa</option>
+                    <option value="Média" selected>Média</option>
+                    <option value="Alta">Alta</option>
+                </select>
+            </div>
+            <div>
+                <label>Status Inicial *</label>
+                <select id="status">
+                    <option value="Aberto" selected>Aberto</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Concluído">Concluído</option>
+                </select>
+            </div>
+            <div class="full-width">
+                <label>Descrição do Problema *</label>
+                <textarea id="descricao" rows="3" placeholder="Descreva os detalhes da solicitação..." required></textarea>
+            </div>
+        </div>
+        <button type="submit">Registrar Chamado</button>
+    </form>
+
+    <div class="filtros">
+        <input type="text" id="busca-texto" placeholder="Buscar chamado por título, e-mail ou setor..." onkeyup="salvarERenderizar()">
+        <select id="filtro-status" onchange="salvarERenderizar()">
+            <option value="Todos">Todos os Status</option>
+            <option value="Aberto">Somente Abertos</option>
+            <option value="Em Andamento">Em Andamento</option>
+            <option value="Concluído">Concluídos</option>
+        </select>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título / Descrição</th>
+                <th>Solicitante / Setor</th>
+                <th>Prioridade</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="lista-chamados"></tbody>
+    </table>
+</div>
+
+<script>
+    let chamados = JSON.parse(localStorage.getItem('bd_chamados_v2')) || [
+        { id: 101, titulo: 'Falha na conexão VPN', descricao: 'Não conecta ao servidor remoto.', email: 'william@empresa.com', setor: 'TI', prioridade: 'Alta', status: 'Aberto', data: '16/11/2026' },
+        { id: 102, titulo: 'Instalação de Software', descricao: 'Solicito acesso ao pacote Office.', email: 'mariana@empresa.com', setor: 'RH', prioridade: 'Baixa', status: 'Em Andamento', data: '16/11/2026' }
+    ];
+
+    function obterClasseStatus(status) {
+        if (status === 'Aberto') return 'status-Aberto';
+        if (status === 'Em Andamento') return 'status-Andamento';
+        return 'status-Concluído';
+    }
+
+    function salvarERenderizar() {
+        localStorage.setItem('bd_chamados_v2', JSON.stringify(chamados));
+        const tbody = document.getElementById('lista-chamados');
+        const termoBusca = document.getElementById('busca-texto').value.toLowerCase();
+        const statusSelecionado = document.getElementById('filtro-status').value;
+
+        tbody.innerHTML = '';
+
+        let abertos = 0, andamento = 0, concluidos = 0;
+
+        chamados.forEach((c, index) => {
+            if (c.status === 'Aberto') abertos++;
+            if (c.status === 'Em Andamento') andamento++;
+            if (c.status === 'Concluído') concluidos++;
+
+            const bateTexto = c.titulo.toLowerCase().includes(termoBusca) || 
+                              c.email.toLowerCase().includes(termoBusca) || 
+                              (c.setor && c.setor.toLowerCase().includes(termoBusca));
+            const bateStatus = (statusSelecionado === 'Todos') || (c.status === statusSelecionado);
+
+            if (bateTexto && bateStatus) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>#${c.id}</td>
+                        <td><strong>${c.titulo}</strong><br><small>${c.descricao}</small></td>
+                        <td>${c.email}<br><small><strong>Setor:</strong> ${c.setor || 'Geral'}</small></td>
+                        <td><span class="badge ${c.prioridade}">${c.prioridade}</span></td>
+                        <td><span class="badge ${obterClasseStatus(c.status)}">${c.status}</span></td>
+                        <td>${c.data}</td>
+                        <td>
+                            <button class="btn-acao btn-concluir" onclick="concluirChamado(${index})">Concluir</button>
+                            <button class="btn-acao btn-excluir" onclick="excluirChamado(${index})">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+
+        document.getElementById('count-aberto').innerText = abertos;
+        document.getElementById('count-andamento').innerText = andamento;
+        document.getElementById('count-concluido').innerText = concluidos;
+    }
+
+    document.getElementById('form-chamado').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const novo = {
+            id: Math.floor(100 + Math.random() * 900),
+            titulo: document.getElementById('titulo').value,
+            email: document.getElementById('email').value,
+            setor: document.getElementById('setor').value,
+            prioridade: document.getElementById('prioridade').value,
+            status: document.getElementById('status').value,
+            descricao: document.getElementById('descricao').value,
+            data: new Date().toLocaleDateString('pt-BR')
+        };
+        chamados.unshift(novo);
+        this.reset();
+        salvarERenderizar();
+    });
+
+    function concluirChamado(index) {
+        chamados[index].status = 'Concluído';
+        salvarERenderizar();
+    }
+
+    function excluirChamado(index) {
+        if (confirm('Deseja realmente excluir este chamado?')) {
+            chamados.splice(index, 1);
+            salvarERenderizar();
+        }
+    }
+
+    salvarERenderizar();
+</script>
+
+</body>
+</html>
