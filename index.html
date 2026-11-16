@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -205,37 +204,12 @@ html
     function excluirChamado(index) {
         if (confirm('Deseja realmente excluir este chamado?')) {
             chamados.splice(index, 1);
-Use o código com cuidado.
-salvarERenderizar();
-}
-}
-salvarERenderizar();
+            salvarERenderizar();
+        }
+    }
 
----
+    salvarERenderizar();
+</script>
 
-### 2. Como Atualizar Rápido Direto no GitHub
-* **Abra o arquivo:** No seu repositório `pit-ii-sistema-chamados`, clique no arquivo **`index.html`**.
-* **Edite o conteúdo:** Clique no ícone de **lápis** (*Edit this file*) no canto superior direito da caixa de código.
-* **Substitua e salve:** Selecione tudo (`Ctrl + A`), apague, cole o código novo acima e clique no botão verde **Commit changes** (duas vezes para confirmar).
-* **Aguarde 1 minuto:** Atualize a página publicada (`https://github.io`) apertando **F5** (ou `Ctrl + F5` para limpar o cache).
-
----
-
-### 3. Texto Pronto para o Laudo de Qualidade (Situação-Problema 3)
-Copie este texto para a seção **Laudo de Qualidade** do seu documento Word e cole os prints de antes e depois logo abaixo dele:
-
-> **Laudo de Qualidade e Melhorias Implementadas**
-> 
-> Após a realização dos testes de aceitação com cinco usuários externos, a aplicação **Help Desk de TI** apresentou estabilidade no fluxo principal de cadastro, persistência de dados no navegador e responsividade em dispositivos móveis. Contudo, os avaliadores identificaram pontos de melhoria relacionados à triagem e à visualização das informações na lista de atendimento.
-> 
-> Com base nos feedbacks coletados, foram aplicadas três melhorias estruturais na versão 2.0 do sistema:
-> 1. **Inclusão do Campo "Setor":** Adicionado seletor de departamento (`TI`, `RH`, `Financeiro`, `Operações`, `Comercial`) no formulário de abertura e exibição na tabela de chamados, permitindo identificar a origem da solicitação.
-> 2. **Barra de Busca e Filtro por Status:** Implementada uma área de filtragem dinâmica acima da tabela, possibilitando pesquisar chamados por palavra-chave (título, e-mail ou setor) e filtrar registros pelo status atual (`Aberto`, `Em Andamento` ou `Concluído`).
-> 3. **Padronização Visual (Badges de Status):** Aplicadas etiquetas coloridas na coluna de Status para facilitar a leitura rápida da fila de atendimento.
-> 
-> *(Insira aqui o Print 1: Tela do sistema antes das melhorias)*
-> *(Insira aqui o Print 2: Tela do sistema após as melhorias aplicadas)*
-
-<FollowUp>
-Depois de atualizar o `index.html` no GitHub e tirar os prints, você só precisa gravar o **Vídeo 2 (até 5 minutos)** mostrando os filtros e o campo de setor funcionando, subir no YouTube como **Não listado** e colar o link na última linha do Word. Precisa de ajuda com mais algum detalhe antes de fechar o arquivo?
-</FollowUp>
+</body>
+</html>
